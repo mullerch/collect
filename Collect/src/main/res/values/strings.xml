@@ -2,9 +2,9 @@
 <resources>
 
     <string name="app_name">Collect</string>
-    <string name="title_section1">Collecteur de données</string>
-    <string name="title_section2">Voir les relevés</string>
-    <string name="title_section3">Voir les données</string>
+    <string name="title_collector">Collecteur de données</string>
+    <string name="title_collections">Voir les relevés</string>
+    <string name="title_data">Voir les données</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example">Example action</string>

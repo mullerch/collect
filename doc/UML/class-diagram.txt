@@ -1,0 +1,17 @@
+@startuml
+
+class Collection {
+  Date date
+  Location location
+  String comment
+  Integer deviceId
+}
+
+class Data {
+	Date date
+	Integer mVoltage
+}
+
+Collection "1" *-- "n" Data
+
+@enduml
