@@ -21,9 +21,9 @@ public class CollectionViewerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_collection_viewer, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_collection_viewer, container, false);
 
-        ListView collectionsListView = (ListView) view.findViewById(R.id.collectionsList);
+        ListView collectionsListView = (ListView) rootView.findViewById(R.id.collectionsList);
 
         String[] values = new String[] { "Data1", "Data2", "Data3", "Data4", "Data5", "Data6",
                 "Data7", "Data8", "Data9", "Data10", "Data11", "Data12", "Data13", "Data14",
@@ -56,7 +56,7 @@ public class CollectionViewerFragment extends Fragment {
 
         });
 
-        return view;
+        return rootView;
     }
 
 

@@ -6,13 +6,9 @@ import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
-import android.widget.TextView;
 
 public class Collect extends Activity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -27,6 +23,9 @@ public class Collect extends Activity
      */
     private CharSequence mTitle;
 
+    private DatabaseManager dbManager = new DatabaseManager();
+
+
     // TODO: implement this
     private int COLLECTOR_ID = 0;
     private int COLLECTIONS_VIEWER_ID = 1;
@@ -40,6 +39,8 @@ public class Collect extends Activity
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
+
+        dbManager.getHelper(this);
 
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer,(DrawerLayout) findViewById(R.id.drawer_layout));
@@ -68,7 +69,7 @@ public class Collect extends Activity
                 break;
         }
 
-        fragmentManager.beginTransaction().replace(R.id.container, drawer_content).commit();
+        fragmentManager.beginTransaction().replace(R.id.content_fragment_container, drawer_content).commit();
     }
 
     public void onSectionAttached(int number) {
@@ -118,6 +119,14 @@ public class Collect extends Activity
         return super.onOptionsItemSelected(item);
     }
 
+//    public DatabaseHelper getDbHelper() {
+//        return dbHelper;
+//    }
 
+    public void onDestroy() {
+        super.onDestroy();
+
+        dbManager.releaseHelper();
+    }
 
 }
