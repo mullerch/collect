@@ -1,7 +1,5 @@
 package com.hesso.mse.collect;
 
-import android.app.Activity;
-;
 import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -10,7 +8,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
 
-public class Collect extends Activity
+import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
+
+public class Collect extends OrmLiteBaseActivity<DatabaseHelper>
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
     /**
@@ -23,7 +23,7 @@ public class Collect extends Activity
      */
     private CharSequence mTitle;
 
-    private DatabaseManager dbManager = new DatabaseManager();
+    private final String LOG_TAG = getClass().getSimpleName();
 
 
     // TODO: implement this
@@ -39,8 +39,6 @@ public class Collect extends Activity
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
-
-        dbManager.getHelper(this);
 
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer,(DrawerLayout) findViewById(R.id.drawer_layout));
@@ -119,14 +117,9 @@ public class Collect extends Activity
         return super.onOptionsItemSelected(item);
     }
 
-//    public DatabaseHelper getDbHelper() {
-//        return dbHelper;
-//    }
-
     public void onDestroy() {
         super.onDestroy();
 
-        dbManager.releaseHelper();
     }
 
 }

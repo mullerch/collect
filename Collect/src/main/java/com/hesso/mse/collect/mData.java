@@ -1,4 +1,4 @@
-package com.hesso.mse.collect.data;
+package com.hesso.mse.collect;
 
 import android.location.Location;
 
@@ -9,7 +9,7 @@ import java.util.Date;
 
 
 @DatabaseTable(tableName = "data")
-public class Data {
+public class mData {
 
     @DatabaseField(generatedId = true)
     private int id;
@@ -17,11 +17,11 @@ public class Data {
     @DatabaseField
     private int value;
 
-    Data() {
+    mData() {
 
     }
 
-    public Data(int value) {
+    public mData(int value) {
         this.value = value;
     }
 }

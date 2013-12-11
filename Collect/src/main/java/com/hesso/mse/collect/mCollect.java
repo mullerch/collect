@@ -1,20 +1,18 @@
-package com.hesso.mse.collect.collect;
+package com.hesso.mse.collect;
 
 import android.location.Location;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @DatabaseTable(tableName = "collect")
-public class Collect {
+public class mCollect {
 
     @DatabaseField(generatedId = true)
     private int id;
 
-    @DatabaseField
     private Location location;
 
     @DatabaseField
@@ -23,17 +21,17 @@ public class Collect {
     @DatabaseField
     private String comment;
 
-    Collect() {
+    mCollect() {
 
     }
 
-    public Collect(Location location, Date date, String comment) {
+    public mCollect(Location location, Date date, String comment) {
         this.location = location;
         this.date = date;
         this.comment = comment;
     }
 
-    public Collect(Location location, String comment) {
+    public mCollect(Location location, String comment) {
         //this.date = new Date(millis);
         this.location = location;
         this.comment = comment;

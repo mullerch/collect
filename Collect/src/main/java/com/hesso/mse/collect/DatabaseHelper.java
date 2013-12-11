@@ -6,10 +6,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.hesso.mse.collect.collect.Collect;
-import com.hesso.mse.collect.device.Device;
-import com.hesso.mse.collect.data.Data;
-
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.RuntimeExceptionDao;
@@ -27,14 +23,17 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     // any time you make changes to your database objects, you may have to increase the database version
     private static final int DATABASE_VERSION = 1;
 
-    // the DAO object we use to access the SimpleData table
-    private Dao<Data, Integer> dataDao = null;
-    private Dao<Collect, Integer> collectDao = null;
-    private Dao<Device, Integer> deviceDao = null;
+    // the DAO object we use to access the objects table
+    private Dao<mData, Integer> dataDao = null;
+    private RuntimeExceptionDao<mData, Integer> dataRuntimeDao = null;
 
-    private RuntimeExceptionDao<Data, Integer> simpleRuntimeDataDao = null;
-    private RuntimeExceptionDao<Collect, Integer> simpleRuntimeCollectDao = null;
-    private RuntimeExceptionDao<Device, Integer> simpleRuntimeDeviceDao = null;
+
+    private Dao<mCollect, Integer> collectDao;
+    private RuntimeExceptionDao<mCollect, Integer> collectRuntimeDao = null;
+
+    private Dao<mDevice, Integer> deviceDao;
+    private RuntimeExceptionDao<mDevice, Integer> deviceRuntimeDao = null;
+
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -48,26 +47,15 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     public void onCreate(SQLiteDatabase db, ConnectionSource connectionSource) {
         try {
             Log.i(DatabaseHelper.class.getName(), "onCreate");
-            TableUtils.createTable(connectionSource, Data.class);
-            TableUtils.createTable(connectionSource, Collect.class);
-            TableUtils.createTable(connectionSource, Device.class);
+            TableUtils.createTable(connectionSource, mData.class);
+            TableUtils.createTable(connectionSource, mCollect.class);
+            TableUtils.createTable(connectionSource, mDevice.class);
         } catch (SQLException e) {
             Log.e(DatabaseHelper.class.getName(), "Can't create database", e);
-            throw new RuntimeException(e);
         }
 
-        // here we try inserting data in the on-create as a test
-        RuntimeExceptionDao<Data, Integer> dataDao = getRuntimeDataDao();
-        RuntimeExceptionDao<Collect, Integer> collectDao = getRuntimeCollectDao();
-        RuntimeExceptionDao<Device, Integer> deviceDao = getRuntimeDeviceDao();
 
-        // create some entries in the onCreate
-        Data data = new Data(23);
-        dataDao.create(data);
-        data = new Data(125);
-        dataDao.create(data);
-
-        Log.i(DatabaseHelper.class.getName(), "created new entries in onCreate");
+        createSampleData();
     }
 
     /**
@@ -78,14 +66,12 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource, int oldVersion, int newVersion) {
         try {
             Log.i(DatabaseHelper.class.getName(), "onUpgrade");
-            TableUtils.dropTable(connectionSource, Data.class, true);
-            TableUtils.dropTable(connectionSource, Collect.class, true);
-            TableUtils.dropTable(connectionSource, Device.class, true);
-            // after we drop the old databases, we create the new ones
+            TableUtils.dropTable(connectionSource, mData.class, true);
+            TableUtils.dropTable(connectionSource, mCollect.class, true);
+            TableUtils.dropTable(connectionSource, mDevice.class, true);
             onCreate(db, connectionSource);
         } catch (SQLException e) {
             Log.e(DatabaseHelper.class.getName(), "Can't drop databases", e);
-            throw new RuntimeException(e);
         }
     }
 
@@ -93,24 +79,24 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
      * Returns the Database Access Object (DAO) for our SimpleData class. It will create it or just give the cached
      * value.
      */
-    public Dao<Data, Integer> getDataDao() throws SQLException {
+    public Dao<mData, Integer> getDataDao() throws SQLException {
         if (dataDao == null) {
-            dataDao = getDao(Data.class);
+            dataDao = getDao(mData.class);
         }
         return dataDao;
     }
 
-    public Dao<Collect, Integer> getCollectDao() throws SQLException {
+    public Dao<mCollect, Integer> getCollectDao() throws SQLException {
         if (collectDao == null) {
-            collectDao = getDao(Collect.class);
+            collectDao = getDao(mCollect.class);
         }
         return collectDao;
     }
 
 
-    public Dao<Device, Integer> getDeviceDao() throws SQLException {
+    public Dao<mDevice, Integer> getDeviceDao() throws SQLException {
         if (deviceDao == null) {
-            deviceDao = getDao(Device.class);
+            deviceDao = getDao(mDevice.class);
         }
         return deviceDao;
     }
@@ -119,35 +105,55 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
      * Returns the RuntimeExceptionDao (Database Access Object) version of a Dao for our SimpleData class. It will
      * create it or just give the cached value. RuntimeExceptionDao only through RuntimeExceptions.
      */
-    public RuntimeExceptionDao<Data, Integer> getRuntimeDataDao() {
-        if (simpleRuntimeDataDao == null) {
-            simpleRuntimeDataDao = getRuntimeExceptionDao(Data.class);
+    public RuntimeExceptionDao<mData, Integer> getRuntimeDataDao() {
+        if (dataRuntimeDao == null) {
+            dataRuntimeDao = getRuntimeExceptionDao(mData.class);
         }
-        return simpleRuntimeDataDao;
+        return dataRuntimeDao;
     }
 
-    public RuntimeExceptionDao<Collect, Integer> getRuntimeCollectDao() {
-        if (simpleRuntimeCollectDao == null) {
-            simpleRuntimeCollectDao = getRuntimeExceptionDao(Collect.class);
-        }
-        return simpleRuntimeCollectDao;
-    }
-
-    public RuntimeExceptionDao<Device, Integer> getRuntimeDeviceDao() {
-        if (simpleRuntimeDeviceDao == null) {
-            simpleRuntimeDeviceDao = getRuntimeExceptionDao(Device.class);
-        }
-        return simpleRuntimeDeviceDao;
-    }
 
     /**
-     * Close the database connections and clear any cached DAOs.
+     * Returns the RuntimeExceptionDao (Database Access Object) version of a Dao for our SimpleData class. It will
+     * create it or just give the cached value. RuntimeExceptionDao only through RuntimeExceptions.
      */
-    @Override
-    public void close() {
-        super.close();
-        simpleRuntimeCollectDao = null;
-        simpleRuntimeDataDao = null;
-        simpleRuntimeDeviceDao = null;
+    public RuntimeExceptionDao<mCollect, Integer> getRuntimeCollectDao() {
+        if (collectRuntimeDao == null) {
+            collectRuntimeDao = getRuntimeExceptionDao(mCollect.class);
+        }
+        return collectRuntimeDao;
     }
+
+
+    /**
+     * Returns the RuntimeExceptionDao (Database Access Object) version of a Dao for our SimpleData class. It will
+     * create it or just give the cached value. RuntimeExceptionDao only through RuntimeExceptions.
+     */
+    public RuntimeExceptionDao<mDevice, Integer> getRuntimeDeviceDao() {
+        if (deviceRuntimeDao == null) {
+            deviceRuntimeDao = getRuntimeExceptionDao(mDevice.class);
+        }
+        return deviceRuntimeDao;
+    }
+
+    private void createSampleData() {
+
+        getRuntimeDeviceDao().create(new mDevice("Humidity captor - Yverdon"));
+        getRuntimeDeviceDao().create(new mDevice("Humidity captor - Lausanne"));
+        getRuntimeDeviceDao().create(new mDevice("Lumen captor - Lausanne"));
+
+        getRuntimeDataDao().create(new mData(76));
+        getRuntimeDataDao().create(new mData(23));
+        getRuntimeDataDao().create(new mData(45));
+        getRuntimeDataDao().create(new mData(12));
+        getRuntimeDataDao().create(new mData(456));
+        getRuntimeDataDao().create(new mData(23));
+
+        getRuntimeCollectDao().create(new mCollect(null, "Collecte 1"));
+        getRuntimeCollectDao().create(new mCollect(null, "Collecte 2"));
+        getRuntimeCollectDao().create(new mCollect(null, "Collecte 3"));
+        getRuntimeCollectDao().create(new mCollect(null, "Collecte 4"));
+
+    }
+
 }
