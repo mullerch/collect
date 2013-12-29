@@ -1,6 +1,9 @@
 package com.hesso.mse.collect;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -21,7 +24,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     // name of the database file for your application -- change to something appropriate for your app
     private static final String DATABASE_NAME = "collect.db";
     // any time you make changes to your database objects, you may have to increase the database version
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     // the DAO object we use to access the objects table
     private Dao<mData, Integer> dataDao = null;
@@ -37,6 +40,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        //context.deleteDatabase(DATABASE_NAME);
     }
 
     /**
@@ -138,22 +142,77 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private void createSampleData() {
 
-        getRuntimeDeviceDao().create(new mDevice("Humidity captor - Yverdon"));
-        getRuntimeDeviceDao().create(new mDevice("Humidity captor - Lausanne"));
-        getRuntimeDeviceDao().create(new mDevice("Lumen captor - Lausanne"));
 
-        getRuntimeDataDao().create(new mData(76));
-        getRuntimeDataDao().create(new mData(23));
-        getRuntimeDataDao().create(new mData(45));
-        getRuntimeDataDao().create(new mData(12));
-        getRuntimeDataDao().create(new mData(456));
-        getRuntimeDataDao().create(new mData(23));
+/*
+        ArrayList<mCollect> collects = new ArrayList<mCollect>();
 
-        getRuntimeCollectDao().create(new mCollect(null, "Collecte 1"));
-        getRuntimeCollectDao().create(new mCollect(null, "Collecte 2"));
-        getRuntimeCollectDao().create(new mCollect(null, "Collecte 3"));
-        getRuntimeCollectDao().create(new mCollect(null, "Collecte 4"));
+        mDevice device1 = new mDevice("Humidity captor - Yverdon");
 
+        collects.add(new mCollect(null, "Collecte 1", device1));
+        collects.add(new mCollect(null, "Collecte 2", device1));
+        collects.add(new mCollect(null, "Collecte 3", new mDevice("Humidity captor - Lausanne")));
+        collects.add(new mCollect(null, "Collecte 4", new mDevice("Lumen captor - Lausanne")));
+
+
+        for(Iterator<mCollect> i = collects.iterator(); i.hasNext(); ) {
+            getRuntimeCollectDao().create(i.next());
+        }
+
+
+        getRuntimeDataDao().create(new mData(1, collects.get(0)));
+        getRuntimeDataDao().create(new mData(2, collects.get(0)));
+        getRuntimeDataDao().create(new mData(3, collects.get(0)));
+        getRuntimeDataDao().create(new mData(4, collects.get(0)));
+        getRuntimeDataDao().create(new mData(5, collects.get(0)));
+        getRuntimeDataDao().create(new mData(6, collects.get(0)));
+        getRuntimeDataDao().create(new mData(7, collects.get(0)));
+        getRuntimeDataDao().create(new mData(8, collects.get(0)));
+        getRuntimeDataDao().create(new mData(9, collects.get(0)));
+        getRuntimeDataDao().create(new mData(25, collects.get(0)));
+        getRuntimeDataDao().create(new mData(26, collects.get(0)));
+        getRuntimeDataDao().create(new mData(27, collects.get(0)));
+        getRuntimeDataDao().create(new mData(28, collects.get(0)));
+        getRuntimeDataDao().create(new mData(29, collects.get(0)));
+        getRuntimeDataDao().create(new mData(30, collects.get(0)));
+        getRuntimeDataDao().create(new mData(31, collects.get(0)));
+        getRuntimeDataDao().create(new mData(32, collects.get(0)));
+        getRuntimeDataDao().create(new mData(33, collects.get(0)));
+        getRuntimeDataDao().create(new mData(34, collects.get(0)));
+        getRuntimeDataDao().create(new mData(35, collects.get(0)));
+        getRuntimeDataDao().create(new mData(36, collects.get(0)));
+        getRuntimeDataDao().create(new mData(37, collects.get(0)));
+        getRuntimeDataDao().create(new mData(38, collects.get(0)));
+        getRuntimeDataDao().create(new mData(39, collects.get(0)));
+        getRuntimeDataDao().create(new mData(40, collects.get(0)));
+        getRuntimeDataDao().create(new mData(41, collects.get(0)));
+        getRuntimeDataDao().create(new mData(42, collects.get(0)));
+
+
+        getRuntimeDataDao().create(new mData(10, collects.get(1)));
+        getRuntimeDataDao().create(new mData(11, collects.get(1)));
+        getRuntimeDataDao().create(new mData(12, collects.get(1)));
+        getRuntimeDataDao().create(new mData(13, collects.get(1)));
+        getRuntimeDataDao().create(new mData(14, collects.get(1)));
+        getRuntimeDataDao().create(new mData(15, collects.get(1)));
+        getRuntimeDataDao().create(new mData(16, collects.get(1)));
+        getRuntimeDataDao().create(new mData(17, collects.get(1)));
+        getRuntimeDataDao().create(new mData(18, collects.get(1)));
+        getRuntimeDataDao().create(new mData(19, collects.get(1)));
+        getRuntimeDataDao().create(new mData(20, collects.get(1)));
+        getRuntimeDataDao().create(new mData(21, collects.get(1)));
+        getRuntimeDataDao().create(new mData(22, collects.get(1)));
+        getRuntimeDataDao().create(new mData(23, collects.get(1)));
+        getRuntimeDataDao().create(new mData(24, collects.get(1)));
+
+
+        getRuntimeDataDao().create(new mData(23, collects.get(2)));
+        getRuntimeDataDao().create(new mData(24, collects.get(2)));
+
+
+        getRuntimeDataDao().create(new mData(23, collects.get(3)));
+        getRuntimeDataDao().create(new mData(24, collects.get(3)));
+
+*/
     }
 
 }

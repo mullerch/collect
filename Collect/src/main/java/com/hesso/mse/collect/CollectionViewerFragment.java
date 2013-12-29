@@ -1,5 +1,6 @@
 package com.hesso.mse.collect;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
@@ -9,49 +10,47 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
+
+import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
-/**
- * Created by christian on 11/19/13.
- */
+
 public class CollectionViewerFragment extends Fragment {
+
+    private DatabaseHelper databaseHelper = null;
+
+    protected DatabaseHelper getHelper() {
+
+        if (databaseHelper == null) {
+            databaseHelper = OpenHelperManager.getHelper(getActivity(), DatabaseHelper.class);
+        }
+        return databaseHelper;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_collection_viewer, container, false);
 
-        ListView collectionsListView = (ListView) rootView.findViewById(R.id.collectionsList);
+        /* Get data list from DB */
+        ListView collectListView = (ListView) rootView.findViewById(R.id.collectionsList);
 
-        String[] values = new String[] { "Data1", "Data2", "Data3", "Data4", "Data5", "Data6",
-                "Data7", "Data8", "Data9", "Data10", "Data11", "Data12", "Data13", "Data14",
-                "Data15", "Data16" };
+        ArrayList<mCollect> collectList = (ArrayList<mCollect>) getHelper().getRuntimeCollectDao().queryForAll();
 
-        final ArrayList<String> collectionList = new ArrayList<String>();
-        for (int i = 0; i < values.length; ++i) {
-            collectionList.add(values[i]);
-        }
+        /*  */
+        CollectArrayAdapter adapter = new CollectArrayAdapter(this.getActivity(), R.id.collectionsList, collectList);
+        collectListView.setAdapter(adapter);
 
 
-        final StableArrayAdapter adapter = new StableArrayAdapter(this.getActivity(), android.R.layout.simple_list_item_1, collectionList);
-        collectionsListView.setAdapter(adapter);
-
-        collectionsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        collectListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, final View view,
                                     int position, long id) {
-                final String item = (String) parent.getItemAtPosition(position);
-                view.animate().setDuration(2000).alpha(0).withEndAction(new Runnable() {
-                            @Override
-                            public void run() {
-                                collectionList.remove(item);
-                                adapter.notifyDataSetChanged();
-                                view.setAlpha(1);
-                            }
-                        });
+                //TODO: implement map fragment opening
+
             }
 
         });
@@ -61,29 +60,46 @@ public class CollectionViewerFragment extends Fragment {
 
 
 
+    /* Collect array adapter */
+    private class CollectArrayAdapter extends ArrayAdapter<mCollect> {
 
 
-    private class StableArrayAdapter extends ArrayAdapter<String> {
+        private ArrayList<mCollect> entries;
+        private Activity activity;
 
-        HashMap<String, Integer> mIdMap = new HashMap<String, Integer>();
+        public CollectArrayAdapter(Activity a, int textViewResourceId, ArrayList<mCollect> entries) {
+            super(a, textViewResourceId, entries);
+            this.entries = entries;
+            this.activity = a;
+        }
 
-        public StableArrayAdapter(Context context, int textViewResourceId,
-                                  List<String> objects) {
-            super(context, textViewResourceId, objects);
-            for (int i = 0; i < objects.size(); ++i) {
-                mIdMap.put(objects.get(i), i);
+        public class ViewHolder{
+            public TextView collectComment;
+            public TextView collectInfo;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View v = convertView;
+            ViewHolder holder;
+            if (v == null) {
+                LayoutInflater vi =
+                        (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                v = vi.inflate(R.layout.collect_item, null);
+                holder = new ViewHolder();
+                holder.collectComment = (TextView) v.findViewById(R.id.collect_comment);
+                holder.collectInfo = (TextView) v.findViewById(R.id.collect_info);
+                v.setTag(holder);
             }
-        }
+            else
+                holder=(ViewHolder)v.getTag();
 
-        @Override
-        public long getItemId(int position) {
-            String item = getItem(position);
-            return mIdMap.get(item);
-        }
-
-        @Override
-        public boolean hasStableIds() {
-            return true;
+            final mCollect collect = entries.get(position);
+            if (collect != null) {
+                holder.collectComment.setText(collect.getComment());
+                holder.collectInfo.setText(collect.getDevice().getDescription() + " - " + collect.getDate());
+            }
+            return v;
         }
 
     }

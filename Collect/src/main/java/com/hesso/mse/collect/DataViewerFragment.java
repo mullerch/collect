@@ -16,8 +16,6 @@ import android.widget.TextView;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 
 public class DataViewerFragment extends Fragment {
@@ -52,11 +50,19 @@ public class DataViewerFragment extends Fragment {
         deviceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
-            public void onItemClick(AdapterView<?> parent, final View view,
-                                    int position, long id) {
+            public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
+
+                Fragment graphVisualisationFragment = new DataViewerGraphFragment();
+
+                mDevice device = (mDevice) parent.getItemAtPosition(position);
+
+                /* Add params to fragment */
+                Bundle bundle = new Bundle();
+                bundle.putInt("DEVICE_ID", device.getId());
+                graphVisualisationFragment.setArguments(bundle);
 
                 /* Opens the graph visualisation fragment */
-                fragmentManager.beginTransaction().replace(R.id.content_fragment_container, new DataViewerGraphFragment()).addToBackStack(null).commit();
+                fragmentManager.beginTransaction().replace(R.id.content_fragment_container, graphVisualisationFragment).addToBackStack(null).commit();
             }
 
         });
@@ -102,7 +108,7 @@ public class DataViewerFragment extends Fragment {
             final mDevice device = entries.get(position);
             if (device != null) {
                 holder.deviceName.setText(device.getDescription());
-                holder.deviceLocation.setText(device.getLastKnownLocation().toString());
+                holder.deviceLocation.setText(device.getLastKnownLocation());
             }
             return v;
         }

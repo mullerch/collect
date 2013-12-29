@@ -11,14 +11,14 @@
 
         <TextView
             android:textSize="24sp"
-            android:id="@+id/device_name"
+            android:id="@+id/collect_info"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
         </TextView>
 
         <TextView
             android:textSize="14sp"
-            android:id="@+id/device_location"
+            android:id="@+id/collect_comment"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
         </TextView>

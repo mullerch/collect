@@ -9,5 +9,12 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example">Example action</string>
     <string name="action_settings">Settings</string>
+    
+    <string name="bundle_device_id">DEVICE_ID</string>
+
+    <string name="nfc_expl">Put your device over the data collector to retrieve data</string>
+
+    <string name="db_collect_idx_device">idx_device</string>
+    <string name="db_data_idx_collect">idx_collect</string>
 
 </resources>
