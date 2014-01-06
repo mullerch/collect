@@ -36,7 +36,6 @@ public class DataViewerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_data_viewer, container, false);
-        final FragmentManager fragmentManager = getFragmentManager();
 
         /* Get data list from DB */
         ListView deviceListView = (ListView) rootView.findViewById(R.id.deviceList);
@@ -62,6 +61,7 @@ public class DataViewerFragment extends Fragment {
                 graphVisualisationFragment.setArguments(bundle);
 
                 /* Opens the graph visualisation fragment */
+                FragmentManager fragmentManager = getFragmentManager();
                 fragmentManager.beginTransaction().replace(R.id.content_fragment_container, graphVisualisationFragment).addToBackStack(null).commit();
             }
 

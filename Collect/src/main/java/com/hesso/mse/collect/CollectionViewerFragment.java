@@ -2,6 +2,7 @@ package com.hesso.mse.collect;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -49,7 +50,18 @@ public class CollectionViewerFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, final View view,
                                     int position, long id) {
-                //TODO: implement map fragment opening
+                Fragment showCollectFragment = new ShowCollectFragment();
+
+                mCollect collect = (mCollect) parent.getItemAtPosition(position);
+
+                /* Add params to fragment */
+                Bundle bundle = new Bundle();
+                bundle.putInt("COLLECT_ID", collect.getId());
+                showCollectFragment.setArguments(bundle);
+
+                /* Opens the graph visualisation fragment */
+                FragmentManager fragmentManager = getFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.content_fragment_container, showCollectFragment).addToBackStack(null).commit();
 
             }
 

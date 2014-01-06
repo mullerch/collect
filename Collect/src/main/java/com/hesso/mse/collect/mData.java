@@ -38,4 +38,6 @@ public class mData {
     public int getValue() {
         return value;
     }
+
+    public int getTime() { return time; }
 }

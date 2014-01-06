@@ -19,7 +19,8 @@ public class mCollect {
     @DatabaseField(generatedId = true)
     private int id;
 
-    private Location location;
+    @DatabaseField
+    private String location;
 
     @DatabaseField
     private long timestamp;
@@ -27,10 +28,20 @@ public class mCollect {
     @DatabaseField
     private String comment;
 
+    @DatabaseField
+    private int startTime;
+
+    @DatabaseField
+    private int endTime;
+
+    @DatabaseField
+    private int step;
+
+
     @ForeignCollectionField(eager = true)
     private ForeignCollection<mData> dataSet;
 
-    @DatabaseField(foreign = true, foreignAutoCreate = true, columnName = "idx_device")
+    @DatabaseField(foreign = true, foreignAutoCreate = true, foreignAutoRefresh = true, columnName = "idx_device")
     private mDevice device;
 
     mCollect() {
@@ -43,7 +54,7 @@ public class mCollect {
      * @param timestamp Collect date
      * @param comment Comment to the collect
      */
-    public mCollect(Location location, int timestamp, String comment, Collection<mData> dataSet, mDevice device) {
+    public mCollect(String location, int timestamp, String comment, Collection<mData> dataSet, mDevice device) {
         this.location = location;
         this.timestamp = timestamp;
         this.comment = comment;
@@ -56,7 +67,7 @@ public class mCollect {
      * @param location Collect location
      * @param comment Collect
      */
-    public mCollect(Location location, String comment, Collection<mData> dataSet, mDevice device) {
+    public mCollect(String location, String comment, Collection<mData> dataSet, mDevice device) {
 
         Calendar c = Calendar.getInstance();
         int timestamp = c.get(Calendar.SECOND);
@@ -68,7 +79,7 @@ public class mCollect {
         this.device = device;
     }
 
-    public mCollect(Location location, String comment, mDevice device) {
+    public mCollect(String location, String comment, mDevice device) {
         Calendar c = Calendar.getInstance();
         long timestamp = System.currentTimeMillis();
 
@@ -102,7 +113,31 @@ public class mCollect {
         return new SimpleDateFormat("dd.MM.yyyy HH:mm").format(new Date(timestamp));
     }
 
-    public String getLocationString() {
-        return location.toString();
+    public String getLocation() {
+        return location;
+    }
+
+    public int getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(int startTime) {
+        this.startTime = startTime;
+    }
+
+    public int getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(int endTime) {
+        this.endTime = endTime;
+    }
+
+    public int getStep() {
+        return step;
+    }
+
+    public void setStep(int step) {
+        this.step = step;
     }
 }

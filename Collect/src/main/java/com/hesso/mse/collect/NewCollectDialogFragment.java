@@ -4,7 +4,11 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -55,7 +59,7 @@ public class NewCollectDialogFragment extends DialogFragment {
             step = Integer.parseInt(tokenizer.nextToken());
         } catch (Exception e) {
 
-            return builder.setMessage("Error, scanned data is missing date and/or step for data mesures")
+            return builder.setMessage("Error, scanned data is missing device id, date and/or step for data mesures")
                     .setNeutralButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -98,7 +102,18 @@ public class NewCollectDialogFragment extends DialogFragment {
                         new Thread((new Runnable() {
                             @Override
                             public void run() {
+
                                 List<mDevice> devices = getHelper().getRuntimeDeviceDao().queryForEq("MAC_ID", macId);
+
+                                LocationManager mLocManager;
+
+                                // Get the location manager
+                                //try {
+                                mLocManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+                                mLocManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, new MyLocationListener(), null);
+                                //} catch (Exception e) {
+                                //    Log.i("NewCollectDialogFragment", "cannot get the location manager : " + e.getStackTrace());
+                                //}
 
                                 mDevice device;
                                 if (devices.size() != 1)
@@ -121,8 +136,6 @@ public class NewCollectDialogFragment extends DialogFragment {
                             }
                         })).start();
 
-                        //
-
                     }
                 })
                 .setNegativeButton("Discard", new DialogInterface.OnClickListener() {
@@ -132,5 +145,30 @@ public class NewCollectDialogFragment extends DialogFragment {
                 });
         // Create the AlertDialog object and return it
         return builder.create();
+    }
+
+    /**
+     * LocationListener inner class
+     * @author romain
+     *
+     */
+    class MyLocationListener implements LocationListener {
+
+        @Override
+        public void onLocationChanged(Location location) {
+            double lat = location.getLatitude();
+            double lon = location.getLongitude();
+
+            Log.i("onLocationChanged", "got a location update: lat=" + lat + " / lon=" + lon);
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {}
+
+        @Override
+        public void onProviderEnabled(String provider) {}
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {}
     }
 }

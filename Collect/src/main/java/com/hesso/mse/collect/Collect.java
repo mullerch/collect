@@ -21,6 +21,8 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+
 import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
 
 import java.io.UnsupportedEncodingException;
@@ -53,7 +55,7 @@ public class Collect extends OrmLiteBaseActivity<DatabaseHelper>
     private static final int DATA_VIEWER_ID = 2;
 
     public static final String MIME_TEXT_PLAIN = "text/plain";
-    public static final String TAG = "NfcDemo";
+    public static final String TAG = "NFC_READ";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,8 +78,6 @@ public class Collect extends OrmLiteBaseActivity<DatabaseHelper>
 
         if (!mNfcAdapter.isEnabled()) {
             mNfcLabel.setText("NFC is disabled.");
-        } else {
-            //mNfcLabel.setText(R.string.nfc_expl);
         }
         handleIntent(getIntent());
 
@@ -94,46 +94,6 @@ public class Collect extends OrmLiteBaseActivity<DatabaseHelper>
          * an IllegalStateException is thrown.
          */
         setupForegroundDispatch(this, mNfcAdapter);
-
-        /*
-        NdefMessage msgs[];
-        Intent intent = getIntent();
-
-        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
-
-
-            String type = intent.getType();
-            if (MIME_TEXT_PLAIN.equals(type)) {
-                Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-                new NdefReaderTask().execute(tag);
-            } else {
-                Log.d(TAG, "Wrong mime type: " + type);
-            }
-
-            Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
-
-            ArrayList<String> ndefMessages = new ArrayList<String>();
-
-            if (rawMsgs != null) {
-                msgs = new NdefMessage[rawMsgs.length];
-                for (int i = 0; i < rawMsgs.length; i++) {
-                    msgs[i] = (NdefMessage) rawMsgs[i];
-                    Log.i("Collect NFC", "New NFC NDEF message : " + rawMsgs[i].toString());
-
-                    ndefMessages.add(((NdefMessage) rawMsgs[i]).getRecords());
-                }
-            }
-
-            String[] tmp = new String[1];
-
-            /* Create new dialog fragment and pass collect data as bundle
-            NewCollectDialogFragment fragment = new NewCollectDialogFragment();
-            Bundle bundle = new Bundle();
-            bundle.putStringArray("COLLECT_DATA", ndefMessages.toArray(tmp));
-            fragment.setArguments(bundle);
-            fragment.show(getFragmentManager(), "NewCollectDialogFragment");
-        }
-        */
 
     }
 
@@ -213,8 +173,7 @@ public class Collect extends OrmLiteBaseActivity<DatabaseHelper>
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
-            case R.id.action_settings:
-                return true;
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -360,8 +319,12 @@ public class Collect extends OrmLiteBaseActivity<DatabaseHelper>
                 NewCollectDialogFragment fragment = new NewCollectDialogFragment();
                 Bundle bundle = new Bundle();
                 bundle.putString("COLLECT_DATA", result);
-                fragment.setArguments(bundle);
-                fragment.show(getFragmentManager(), "NewCollectDialogFragment");
+
+                Fragment newCollectFragment = new NewCollectFragment();
+                newCollectFragment.setArguments(bundle);
+
+                FragmentManager fragmentManager = getFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.content_fragment_container, newCollectFragment).addToBackStack(null).commit();
             }
         }
     }

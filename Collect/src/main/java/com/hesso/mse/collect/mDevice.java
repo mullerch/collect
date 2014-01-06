@@ -43,12 +43,26 @@ public class mDevice {
         return id;
     }
 
+    public String getMacId() {
+        return macId;
+    }
+
     /**
      * @return Last device known location due to referenced collects
      */
     public String getLastKnownLocation() {
 
-        return "Location";
+        long newest = 0;
+        String last = "No location found";
+
+        for(mCollect collect: collectList) {
+            if(collect.getTimestamp() > newest) {
+                newest = collect.getTimestamp();
+                last = collect.getLocation();
+            }
+        }
+
+        return last;
     }
 
     /**
